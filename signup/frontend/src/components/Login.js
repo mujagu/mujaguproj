@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
 
@@ -8,7 +7,6 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [token, setToken] = useState(null);
 
-    let navigate = useNavigate('/');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -19,7 +17,6 @@ const Login = () => {
             });
             setToken(response.data.key);
             alert('Login successful');
-            navigate('/')
         } catch (error) {
             alert('Login failed. Please try again.');
         }
