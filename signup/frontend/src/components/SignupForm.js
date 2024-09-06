@@ -29,6 +29,7 @@ const Signup = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            window.location.href('/')
             alert("Signup successful!");
         } catch (error) {
             console.error("There was an error signing up:", error.response.data);
