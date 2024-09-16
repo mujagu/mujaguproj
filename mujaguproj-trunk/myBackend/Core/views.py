@@ -1,16 +1,18 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from Core.models import User, Job
+from .models import User, Job, Message, Post, Profile, Bookmark
 
-from Core.serializers import MyTokenObtainPairSerializer, RegisterSerializer, PostSerializer, JobSerializer
+from .serializers import MyTokenObtainPairSerializer, RegisterSerializer, PostSerializer, JobSerializer, MessageSerializer, ProfileSerializer, BookmarkSerializer
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import generics
+from rest_framework import generics, permissions
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.views import APIView
+from django.db.models import Q
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -21,9 +23,30 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
 
-from rest_framework import generics, permissions
-from .models import Post
-from .serializers import PostSerializer
+class ProfileDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            profile = Profile.objects.get(user=request.user)
+        except Profile.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
+
+    def put(self, request):
+        try:
+            profile = Profile.objects.get(user=request.user)
+        except Profile.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProfileSerializer(profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class PostListCreateView(generics.ListCreateAPIView):
     queryset = Post.objects.all().order_by('-created_at')
@@ -40,6 +63,51 @@ class JobListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+
+class MessageListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        # Get all messages between the logged-in user and the specified user
+        messages = Message.objects.filter(
+            (Q(sender=request.user) & Q(receiver_id=user_id)) |
+            (Q(sender_id=user_id) & Q(receiver=request.user))
+        ).order_by('timestamp')
+        
+        serializer = MessageSerializer(messages, many=True)
+        return Response(serializer.data)
+
+class SendMessageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        data = request.data.copy()
+        data['sender'] = request.user.id  # Automatically set the sender as the logged-in user
+        serializer = MessageSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class BookmarkPostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        user = request.user
+        post = Post.objects.get(id=post_id)
+
+        # Check if the bookmark already exists
+        if Bookmark.objects.filter(user=user, post=post).exists():
+            return Response({"detail": "Already bookmarked."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a new bookmark
+        bookmark = Bookmark.objects.create(user=user, post=post)
+        serializer = BookmarkSerializer(bookmark)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 
 # Get All Routes

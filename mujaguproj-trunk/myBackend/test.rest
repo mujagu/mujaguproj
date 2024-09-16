@@ -12,10 +12,41 @@ Content-Type: application/json
 
 ###
 
-POST http://127.0.0.1:8000/api/skills
+### GET all jobs
+POST http://localhost:8000/api/posts/
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODExMjk2LCJpYXQiOjE3MjY0OTEyOTYsImp0aSI6IjMzZWE5MDRkMDM5YTQ3MDliMThiNGIzZGUzOWQ1ZDJiIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiJHbG9yaWEiLCJwYXNzd29yZCI6InBia2RmMl9zaGEyNTYkNzIwMDAwJFhUQ2tKc1hWZzVSb3k4QU03YkUzS24kRHArZ01jVkkyalo4WmR1SGtNQ3dnTnpIbjZYSkVONkJ2dlo0QlAvTkZUMD0ifQ.7_IHHXsktVx2WfORM8EzluGzwm_MypeFnSAbH-XQRQw
 
-{}
+{
+    "job_description": "Responsible for developing software solutions",
+    "image": null
+}
+
+
+### POST a new job
+POST http://localhost:8000/api/jobs/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODExMjk2LCJpYXQiOjE3MjY0OTEyOTYsImp0aSI6IjMzZWE5MDRkMDM5YTQ3MDliMThiNGIzZGUzOWQ1ZDJiIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiJHbG9yaWEiLCJwYXNzd29yZCI6InBia2RmMl9zaGEyNTYkNzIwMDAwJFhUQ2tKc1hWZzVSb3k4QU03YkUzS24kRHArZ01jVkkyalo4WmR1SGtNQ3dnTnpIbjZYSkVONkJ2dlo0QlAvTkZUMD0ifQ.7_IHHXsktVx2WfORM8EzluGzwm_MypeFnSAbH-XQRQw
+
+{
+  "job_title": "Sof. Engineer",
+  "job_description": "Responsible for developing software solutions",
+  "business_name": "TechCorp",
+  "category": "Technology",
+  "type": "Full-time",
+  "qualification": "Bachelor's degree in Computer Science",
+  "gender": "Any",
+  "apply_type": "Email",
+  "apply_email": "jobs@techcorp.com",
+  "salary_type": "Fixed",
+  "job_salary": 100000,
+  "min_salary": 80000,
+  "max_salary": 120000,
+  "experience": "3-5 years",
+  "application_deadline": "2024-10-01",
+  "career_level": "Mid",
+  "image": null
+}
 
 ###
 
@@ -23,3 +54,75 @@ GET http://127.0.0.1:8000/api/skills/
 Content-Type: application/json
  
 {"name":"programmer", "proficiency_level":"intermediate"}
+
+###
+
+### Send a message (POST request)
+POST http://localhost:8000/api/messages/send/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODExMjk2LCJpYXQiOjE3MjY0OTEyOTYsImp0aSI6IjMzZWE5MDRkMDM5YTQ3MDliMThiNGIzZGUzOWQ1ZDJiIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiJHbG9yaWEiLCJwYXNzd29yZCI6InBia2RmMl9zaGEyNTYkNzIwMDAwJFhUQ2tKc1hWZzVSb3k4QU03YkUzS24kRHArZ01jVkkyalo4WmR1SGtNQ3dnTnpIbjZYSkVONkJ2dlo0QlAvTkZUMD0ifQ.7_IHHXsktVx2WfORM8EzluGzwm_MypeFnSAbH-XQRQw
+
+{
+  "receiver": 2,
+  "content": "Hello, how are you?"
+}
+
+###
+
+###display all messages between the users
+GET http://localhost:8000/api/messages/2/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODExMjk2LCJpYXQiOjE3MjY0OTEyOTYsImp0aSI6IjMzZWE5MDRkMDM5YTQ3MDliMThiNGIzZGUzOWQ1ZDJiIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiJHbG9yaWEiLCJwYXNzd29yZCI6InBia2RmMl9zaGEyNTYkNzIwMDAwJFhUQ2tKc1hWZzVSb3k4QU03YkUzS24kRHArZ01jVkkyalo4WmR1SGtNQ3dnTnpIbjZYSkVONkJ2dlo0QlAvTkZUMD0ifQ.7_IHHXsktVx2WfORM8EzluGzwm_MypeFnSAbH-XQRQw
+
+{
+ 
+}
+
+###
+
+###fetch user profile of the logged in user
+GET http://localhost:8000/api/profile/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODExMjk2LCJpYXQiOjE3MjY0OTEyOTYsImp0aSI6IjMzZWE5MDRkMDM5YTQ3MDliMThiNGIzZGUzOWQ1ZDJiIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiJHbG9yaWEiLCJwYXNzd29yZCI6InBia2RmMl9zaGEyNTYkNzIwMDAwJFhUQ2tKc1hWZzVSb3k4QU03YkUzS24kRHArZ01jVkkyalo4WmR1SGtNQ3dnTnpIbjZYSkVONkJ2dlo0QlAvTkZUMD0ifQ.7_IHHXsktVx2WfORM8EzluGzwm_MypeFnSAbH-XQRQw
+
+{
+ 
+}
+
+###
+
+###edit profile
+### Update Profile (PUT request)
+PUT http://localhost:8000/api/profile/
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODExMjk2LCJpYXQiOjE3MjY0OTEyOTYsImp0aSI6IjMzZWE5MDRkMDM5YTQ3MDliMThiNGIzZGUzOWQ1ZDJiIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiJHbG9yaWEiLCJwYXNzd29yZCI6InBia2RmMl9zaGEyNTYkNzIwMDAwJFhUQ2tKc1hWZzVSb3k4QU03YkUzS24kRHArZ01jVkkyalo4WmR1SGtNQ3dnTnpIbjZYSkVONkJ2dlo0QlAvTkZUMD0ifQ.7_IHHXsktVx2WfORM8EzluGzwm_MypeFnSAbH-XQRQw
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="full_name"
+
+Aahebwa Gloria
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="bio"
+
+Software Developer
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="skills"
+
+JavaScript, Python, Django
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+# Content-Disposition: form-data; name="image"; filename="profile_pic.jpg"
+# Content-Type: image/jpeg
+
+# <binary data of image file>
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+
+### Book mark post (POST request)
+POST http://localhost:8000/api/bookmark/1/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODExMjk2LCJpYXQiOjE3MjY0OTEyOTYsImp0aSI6IjMzZWE5MDRkMDM5YTQ3MDliMThiNGIzZGUzOWQ1ZDJiIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiJHbG9yaWEiLCJwYXNzd29yZCI6InBia2RmMl9zaGEyNTYkNzIwMDAwJFhUQ2tKc1hWZzVSb3k4QU03YkUzS24kRHArZ01jVkkyalo4WmR1SGtNQ3dnTnpIbjZYSkVONkJ2dlo0QlAvTkZUMD0ifQ.7_IHHXsktVx2WfORM8EzluGzwm_MypeFnSAbH-XQRQw
+
+{
+ 
+}
+

@@ -14,19 +14,14 @@ class User(AbstractUser):
     def profile(self):
         profile = Profile.objects.get(user=self)
 
-class Skill(models.Model):
-    name = models.CharField(max_length=15)
-
-    def __str__(self):
-        return self.name
-
+###
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=1000)
-    bio = models.CharField(max_length=100)
+    bio = models.TextField()
     image = models.ImageField(upload_to="user_images", default="default.jpg")
     verified = models.BooleanField(default=False)
-    skills = models.ManyToManyField(Skill, blank=True)
+    skills = models.CharField(max_length=100)
 
 
 def create_user_profile(sender, instance, created, **kwargs):
@@ -39,6 +34,7 @@ def save_user_profile(sender, instance, **kwargs):
 post_save.connect(create_user_profile, sender=User)
 post_save.connect(save_user_profile, sender=User)
 
+###
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     # job_title = models.CharField(max_length=15, null=True, blank=True)
@@ -47,8 +43,9 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.author.username} - {self.content[:30]}'
+        return f'{self.author.username} - {self.job_description[:30]}'
     
+###
 class Job(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='job_posts')
     job_title = models.CharField(max_length=15)
@@ -72,3 +69,34 @@ class Job(models.Model):
     gender = models.CharField(max_length=100)
     image = models.ImageField(upload_to='posts', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.job_title} - {self.author.username}"
+    
+
+###
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'From {self.sender} to {self.receiver}'
+
+    class Meta:
+        ordering = ['-timestamp']
+
+###
+class Bookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookmarks')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='bookmarked_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.post.job_description[:30]}"
+
+    class Meta:
+        unique_together = ('user', 'post')  # Ensures a user can bookmark a post only once
+

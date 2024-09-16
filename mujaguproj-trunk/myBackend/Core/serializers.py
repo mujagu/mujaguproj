@@ -1,4 +1,4 @@
-from Core.models import User, Post, Job
+from .models import User, Post, Job, Message, Profile, Bookmark
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
@@ -49,6 +49,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+    
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+       model = Profile
+       fields = ('id', 'user', 'full_name', 'bio', 'image', 'verified', 'skills')
 
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(read_only=True)
@@ -61,3 +66,16 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = '__all__'
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ('id', 'sender', 'receiver', 'content', 'timestamp', 'is_read')
+
+
+
+class BookmarkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bookmark
+        fields = ['id', 'user', 'post', 'created_at']
