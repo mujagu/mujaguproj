@@ -1,0 +1,25 @@
+POST http://127.0.0.1:8000/api/token/
+Content-Type: application/json
+
+{"username":"Gloria", "password":"Aahebwa#24", "email":"gloria@gmail.com"}
+
+###
+
+POST http://127.0.0.1:8000/api/register/
+Content-Type: application/json
+
+{"first_name":"Aahebwa","last_name":"Gloria","username":"Gloria", "password":"Aahebwa#24","password2":"Aahebwa#24", "email":"gloria@gmail.com"}
+
+###
+
+POST http://127.0.0.1:8000/api/skills
+Content-Type: application/json
+
+{}
+
+###
+
+GET http://127.0.0.1:8000/api/skills/
+Content-Type: application/json
+ 
+{"name":"programmer", "proficiency_level":"intermediate"}
