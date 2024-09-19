@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import User, Job, Message, Post, Profile, Bookmark
+from .models import User, Job, Message, Post, Profile, Bookmark, Skills, Project, Muse
 
-from .serializers import MyTokenObtainPairSerializer, RegisterSerializer, PostSerializer, JobSerializer, MessageSerializer, ProfileSerializer, BookmarkSerializer
+from .serializers import MyTokenObtainPairSerializer, RegisterSerializer, PostSerializer, JobSerializer, MessageSerializer, ProfileSerializer, BookmarkSerializer, SkillsSerializer, ProjectSerializer, MuseSerializer
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -64,6 +64,29 @@ class JobListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+class SkllsCreateView(generics.ListCreateAPIView):
+    queryset = Skills.objects.all()
+    serializer_class = SkillsSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class ProjectCreateView(generics.ListCreateAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class MuseCreateView(generics.ListCreateAPIView):
+    queryset = Muse
+    serializer_class = MuseSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
 class MessageListView(APIView):

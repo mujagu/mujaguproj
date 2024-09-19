@@ -15,6 +15,9 @@ urlpatterns = [
     path('messages/<int:user_id>/', views.MessageListView.as_view(), name='message_list'),
     path('messages/send/', views.SendMessageView.as_view(), name='send_message'),
     path('bookmark/<int:post_id>/', views.BookmarkPostView.as_view(), name='bookmark'),
+    path('skills/', views.SkllsCreateView.as_view(), name='skills'),
+    path('project/', views.ProjectCreateView.as_view(), name='project'),
+    path('muse/', views.MuseCreateView.as_view(), name='muse'),
 
     path('test/', views.testEndPoint, name='test'),
     path('', views.getRoutes),

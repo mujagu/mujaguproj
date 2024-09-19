@@ -4,11 +4,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    username = models.CharField(max_length=100)
+    username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
 
 
     def profile(self):
@@ -100,3 +97,38 @@ class Bookmark(models.Model):
     class Meta:
         unique_together = ('user', 'post')  # Ensures a user can bookmark a post only once
 
+###
+class Skills(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    skill = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.author.username} - {self.skill}"
+
+    class Meta:
+        verbose_name_plural = 'Skills'
+
+###
+class Project(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project')
+    category = models.CharField(max_length=100)
+    cover_image = models.ImageField(upload_to='project_images', default='default.jpg', null=True, blank=True)
+    upload_images =  models.ImageField(upload_to='project_images', default='default.jpg', null=True, blank=True)
+    description = models.TextField()
+    service_title = models.CharField(max_length=100)
+    short_description = models.CharField(max_length=100)
+    delivery_time = models.DateTimeField()
+    revision_number = models.IntegerField(null=True, blank=True)
+    add_features = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.category} - {self.author.username}"
+    
+###
+class Muse(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='muse')
+    video_field = models.FileField(upload_to='muse')
+    caption = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.author.username

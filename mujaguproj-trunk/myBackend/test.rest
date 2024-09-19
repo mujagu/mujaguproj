@@ -12,7 +12,7 @@ Content-Type: application/json
 
 ###
 
-### GET all jobs
+### Add a post
 POST http://localhost:8000/api/posts/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODExMjk2LCJpYXQiOjE3MjY0OTEyOTYsImp0aSI6IjMzZWE5MDRkMDM5YTQ3MDliMThiNGIzZGUzOWQ1ZDJiIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiJHbG9yaWEiLCJwYXNzd29yZCI6InBia2RmMl9zaGEyNTYkNzIwMDAwJFhUQ2tKc1hWZzVSb3k4QU03YkUzS24kRHArZ01jVkkyalo4WmR1SGtNQ3dnTnpIbjZYSkVONkJ2dlo0QlAvTkZUMD0ifQ.7_IHHXsktVx2WfORM8EzluGzwm_MypeFnSAbH-XQRQw
@@ -53,7 +53,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 GET http://127.0.0.1:8000/api/skills/
 Content-Type: application/json
  
-{"name":"programmer", "proficiency_level":"intermediate"}
+{
+
+}
 
 ###
 
@@ -126,3 +128,27 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
  
 }
 
+
+###add skills
+POST http://127.0.0.1:8000/api/skills/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODExMjk2LCJpYXQiOjE3MjY0OTEyOTYsImp0aSI6IjMzZWE5MDRkMDM5YTQ3MDliMThiNGIzZGUzOWQ1ZDJiIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiJHbG9yaWEiLCJwYXNzd29yZCI6InBia2RmMl9zaGEyNTYkNzIwMDAwJFhUQ2tKc1hWZzVSb3k4QU03YkUzS24kRHArZ01jVkkyalo4WmR1SGtNQ3dnTnpIbjZYSkVONkJ2dlo0QlAvTkZUMD0ifQ.7_IHHXsktVx2WfORM8EzluGzwm_MypeFnSAbH-XQRQw
+
+{
+  "skill": "Django"
+}
+
+
+###add project
+POST http://127.0.0.1:8000/api/project/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODExMjk2LCJpYXQiOjE3MjY0OTEyOTYsImp0aSI6IjMzZWE5MDRkMDM5YTQ3MDliMThiNGIzZGUzOWQ1ZDJiIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiJHbG9yaWEiLCJwYXNzd29yZCI6InBia2RmMl9zaGEyNTYkNzIwMDAwJFhUQ2tKc1hWZzVSb3k4QU03YkUzS24kRHArZ01jVkkyalo4WmR1SGtNQ3dnTnpIbjZYSkVONkJ2dlo0QlAvTkZUMD0ifQ.7_IHHXsktVx2WfORM8EzluGzwm_MypeFnSAbH-XQRQw
+
+{
+  "category": "Design",
+  "description": "Design graphics",
+  "service_title": "templates",
+  "short_description": "we got it",
+  "delivery_time": "2024-10-02"
+  
+}
