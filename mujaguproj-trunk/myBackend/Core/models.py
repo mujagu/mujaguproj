@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractUser
+import uuid
 
 
 class User(AbstractUser):
@@ -13,6 +14,7 @@ class User(AbstractUser):
 
 ###
 class Profile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=1000)
     bio = models.TextField()
@@ -33,8 +35,8 @@ post_save.connect(save_user_profile, sender=User)
 
 ###
 class Post(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
-    # job_title = models.CharField(max_length=15, null=True, blank=True)
     job_description = models.TextField()
     image = models.ImageField(upload_to='posts', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -43,7 +45,38 @@ class Post(models.Model):
         return f'{self.author.username} - {self.job_description[:30]}'
     
 ###
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+
+    def __str__(self):
+        return f'Like by {self.user.username} on {self.post.job_description[:10]}'
+
+    class Meta:
+        unique_together = ('user', 'post')
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment by {self.user.username} on {self.post}'
+
+class Bookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='bookmarks')
+
+    def __str__(self):
+        return f'Bookmark by {self.user.username} on {self.post.title}'
+
+    class Meta:
+        unique_together = ('user', 'post')
+    
+###
 class Job(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='job_posts')
     job_title = models.CharField(max_length=15)
     job_description = models.TextField()
@@ -57,7 +90,6 @@ class Job(models.Model):
     apply_email = models.CharField(max_length=100, null=True, blank=True)
     apply_url = models.CharField(max_length=100, null=True, blank=True)
     salary_type = models.CharField(max_length=100)
-    job_salary = models.IntegerField()
     min_salary = models.IntegerField()
     max_salary = models.IntegerField()
     experience = models.CharField(max_length=100)
@@ -73,6 +105,7 @@ class Job(models.Model):
 
 ###
 class Message(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
@@ -85,17 +118,6 @@ class Message(models.Model):
     class Meta:
         ordering = ['-timestamp']
 
-###
-class Bookmark(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookmarks')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='bookmarked_by')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username} - {self.post.job_description[:30]}"
-
-    class Meta:
-        unique_together = ('user', 'post')  # Ensures a user can bookmark a post only once
 
 ###
 class Skills(models.Model):
@@ -110,7 +132,9 @@ class Skills(models.Model):
 
 ###
 class Project(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project')
+    title = models.CharField(max_length=100)
     category = models.CharField(max_length=100)
     cover_image = models.ImageField(upload_to='project_images', default='default.jpg', null=True, blank=True)
     upload_images =  models.ImageField(upload_to='project_images', default='default.jpg', null=True, blank=True)
@@ -126,6 +150,7 @@ class Project(models.Model):
     
 ###
 class Muse(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='muse')
     video_field = models.FileField(upload_to='muse')
     caption = models.CharField(max_length=100)

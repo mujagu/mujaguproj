@@ -1,16 +1,16 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import User, Job, Message, Post, Profile, Bookmark, Skills, Project, Muse
+from .models import User, Job, Message, Post, Profile, Bookmark, Skills, Project, Muse, Like, Comment
 
-from .serializers import MyTokenObtainPairSerializer, RegisterSerializer, PostSerializer, JobSerializer, MessageSerializer, ProfileSerializer, BookmarkSerializer, SkillsSerializer, ProjectSerializer, MuseSerializer
+from .serializers import MyTokenObtainPairSerializer, RegisterSerializer, PostSerializer, JobSerializer, CommentSerializer, MessageSerializer, ProfileSerializer, BookmarkSerializer, SkillsSerializer, ProjectSerializer, MuseSerializer
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics, permissions
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework import status, viewsets
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.views import APIView
 from django.db.models import Q
 
@@ -48,13 +48,32 @@ class ProfileDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PostListCreateView(generics.ListCreateAPIView):
+class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+    @action(detail=True, methods=['post'])
+    def like(self, request, pk=None):
+        post = self.get_object()
+        Like.objects.get_or_create(user=request.user, post=post)
+        return Response({'status': 'post liked'})
+
+    @action(detail=True, methods=['post'])
+    def bookmark(self, request, pk=None):
+        post = self.get_object()
+        Bookmark.objects.get_or_create(user=request.user, post=post)
+        return Response({'status': 'post bookmarked'})
+
+    @action(detail=True, methods=['post'])
+    def comment(self, request, pk=None):
+        post = self.get_object()
+        content = request.data.get('content')
+        comment = Comment.objects.create(user=request.user, post=post, content=content)
+        return Response(CommentSerializer(comment).data)
+    
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
 
 class JobListCreateView(generics.ListCreateAPIView):
     queryset = Job.objects.all().order_by('-created_at')
@@ -63,6 +82,8 @@ class JobListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    
 
 class SkllsCreateView(generics.ListCreateAPIView):
     queryset = Skills.objects.all()
@@ -115,21 +136,21 @@ class SendMessageView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class BookmarkPostView(APIView):
-    permission_classes = [IsAuthenticated]
+# class BookmarkPostView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def post(self, request, post_id):
-        user = request.user
-        post = Post.objects.get(id=post_id)
+#     def post(self, request, post_id):
+#         user = request.user
+#         post = Post.objects.get(id=post_id)
 
-        # Check if the bookmark already exists
-        if Bookmark.objects.filter(user=user, post=post).exists():
-            return Response({"detail": "Already bookmarked."}, status=status.HTTP_400_BAD_REQUEST)
+#         # Check if the bookmark already exists
+#         if Bookmark.objects.filter(user=user, post=post).exists():
+#             return Response({"detail": "Already bookmarked."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create a new bookmark
-        bookmark = Bookmark.objects.create(user=user, post=post)
-        serializer = BookmarkSerializer(bookmark)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         # Create a new bookmark
+#         bookmark = Bookmark.objects.create(user=user, post=post)
+#         serializer = BookmarkSerializer(bookmark)
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 
@@ -156,3 +177,5 @@ def testEndPoint(request):
         data = f'Congratulation your API just responded to POST request with text: {text}'
         return Response({'response': data}, status=status.HTTP_200_OK)
     return Response({}, status.HTTP_400_BAD_REQUEST)
+
+

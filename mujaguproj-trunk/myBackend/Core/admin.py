@@ -1,5 +1,5 @@
 from django.contrib import admin
-from Core.models import User,Profile, Post, Job, Message, Bookmark, Skills, Project, Muse
+from Core.models import User,Profile, Post, Job, Message, Bookmark, Skills, Project, Muse, Comment, Like
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ['username', 'email']
@@ -11,10 +11,15 @@ class ProfileAdmin(admin.ModelAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register( Profile,ProfileAdmin)
+
 admin.site.register( Post)
 admin.site.register( Job)
-admin.site.register( Message)
+admin.site.register( Like)
+admin.site.register( Comment)
 admin.site.register( Bookmark)
+
+admin.site.register( Message)
 admin.site.register( Skills)
 admin.site.register( Project)
+
 admin.site.register( Muse)

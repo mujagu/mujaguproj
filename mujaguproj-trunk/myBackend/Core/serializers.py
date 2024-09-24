@@ -1,4 +1,4 @@
-from .models import User, Post, Job, Message, Profile, Bookmark, Skills, Project, Muse
+from .models import User, Post, Job, Message, Profile, Bookmark, Skills, Project, Muse, Comment, Like
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
@@ -55,17 +55,39 @@ class ProfileSerializer(serializers.ModelSerializer):
        model = Profile
        fields = ('id', 'user', 'full_name', 'bio', 'image', 'verified', 'skills')
 
+class CommentSerializer(serializers.ModelSerializer):
+    user_name = serializers.ReadOnlyField(source='user.username')
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'content', 'user_name', 'created_at']
+
 class PostSerializer(serializers.ModelSerializer):
-    author = serializers.StringRelatedField(read_only=True)
+    author = serializers.ReadOnlyField(source='author.username')
+    likes_count = serializers.IntegerField(source='likes.count', read_only=True)
+    comments_count = serializers.IntegerField(source='comments.count', read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
+    bookmarks_count = serializers.IntegerField(source='bookmarks.count', read_only=True)
     class Meta:
         model = Post
-        fields = ('id', 'author', 'job_description', 'image', 'created_at')
+        fields = ('id', 'author', 'job_description', 'image', 'created_at', 'likes_count', 'comments', 'comments_count', 'bookmarks_count')
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ['id']
+
+class BookmarkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bookmark
+        fields = ['id']
 
 class JobSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(read_only=True)
     class Meta:
         model = Job
         fields = '__all__'
+
 
 class SkillsSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(read_only=True)
